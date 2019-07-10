@@ -1,0 +1,34 @@
+#posts-container {
+    width: 900px;
+    margin: 10px auto;
+    background-color: cadetblue;
+    padding-top: 2px;
+}
+.sort-panel {
+    width: 500px;
+    margin: auto;
+}
+.sort {
+    float: left;
+}
+.single-post-container {
+    border: 1px solid black;
+    margin: 3px;
+    padding: 10px;
+    min-height: 220px;
+}
+.post-cteated-date {
+    font-size: 0.9em;
+}
+.image-container {
+    float: left;
+    margin-right: 10px;
+}
+.remove-post-container {
+    height: 20px;
+    width: 20px;
+    float: right;
+}
+.refresh-button {
+    float: right;
+}
