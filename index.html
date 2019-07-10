@@ -1,0 +1,129 @@
+<!doctype html>
+<html>
+ <head>
+    <meta charset="utf-8">
+    <title>Untitled Document</title>
+    <link rel="stylesheet" href="css/styles.css">
+     
+ </head>
+ <body>
+     <div class="sort-panel">
+         <div class="sort">Sort by date: </div>
+         <input type="radio" id="sortAscending" name="sortByDate" value="ascending">
+         <label for="sortAscending">Ascending</label>
+         <input type="radio" id="sortDescending" name="sortByDate" value="descending">
+         <label for="sortDescending">Descending</label>
+         <div class="refresh-button">
+             <button onClick="window.location.reload();">Refresh</button>
+         </div>
+         
+     </div>
+     <div id="posts-container"></div>
+     
+     <script>
+         
+        window.onload = () => {
+            const url = 'https://api.myjson.com/bins/152f9j';
+            fetch(url)
+                .then(res => res.json())
+                .then(data => {
+                    const rawData = data.data;
+                    return rawData.map(post => {
+                        //all needed data is listed below as an entity 
+                        let createdAt = post.createdAt;
+                            description = post.description;
+                            img = post.image;
+                            tags = post.tags;
+                            title = post.title;
+                        
+                        //create the post container element
+                        const newPostContainer = document.createElement('div');
+                        newPostContainer.setAttribute('class','single-post-container');
+                        
+                        //add the remove post icon
+                        const removePostIconContainer = document.createElement('div');
+                        removePostIconContainer.setAttribute('class','remove-post-container');
+                        const removePostIcon = document.createElement('img');
+                        removePostIcon.setAttribute('src', 'img/delete.png');
+                        removePostIcon.setAttribute('height', 20);
+                        removePostIconContainer.appendChild(removePostIcon);
+                        
+                        //add the event listener to the remove post icon container
+                        removePostIconContainer.addEventListener ('click', function (e) {
+                            postsContainer.removeChild(removePostIconContainer.parentNode);
+                        });
+                        
+                        //create the post title element
+                        const postTitle = document.createElement('h3');
+                        postTitle.innerHTML = title;
+                        
+                        //create the description paragraph element
+                        const postDescription = document.createElement('p');
+                        postDescription.innerHTML = description;
+                        
+                        //create the image element
+                        const postImage = document.createElement('img');
+                        postImage.setAttribute('src', img);
+                        const imageContainer = document.createElement('div');
+                        imageContainer.setAttribute('class', 'image-container');
+                        imageContainer.appendChild(postImage);
+                        
+                        
+                        //create the date of the post element
+                        const postCreateDate = document.createElement('p');
+                        postCreateDate.setAttribute('class','post-cteated-date');
+                        const createdAtYear = createdAt.substring (0,4);
+                        const createdAtYearNoLeadingZero = createdAtYear.replace(/^0+/, '');
+                        const createdAtMonth = createdAt.substring (5,7);
+                        const monthShortNames = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
+                        const createdAtMonthName = monthShortNames[createdAtMonth-1];
+                        const createdAtDay = createdAt.substring (8,10);
+                        postCreateDate.innerHTML = createdAtMonthName + ' ' + createdAtDay + ', ' + createdAtYearNoLeadingZero;
+                        
+                        //create the post tags element
+                        const postTags = document.createElement('p');
+                        let allTagNames = tags[0]; 
+                        //i is assigned to 1 because tags[0] has been already assigned to allTagNames 
+                        for (var i = 1; i < tags.length; i++) {
+                            allTagNames += ', ' + tags[i];
+                        }
+                        postTags.innerHTML = 'Tags: ' + allTagNames;
+                        
+                        //add created elements to the post container
+                        newPostContainer.appendChild(removePostIconContainer);
+                        newPostContainer.appendChild(postTitle);
+                        newPostContainer.appendChild(imageContainer);
+                        newPostContainer.appendChild(postCreateDate);
+                        newPostContainer.appendChild(postDescription);
+                        newPostContainer.appendChild(postTags);
+                        
+                        //append element
+                        const postsContainer = document.getElementById('posts-container');
+                        postsContainer.appendChild(newPostContainer);
+                        
+                        console.log(allTagNames);
+
+                    });
+                    
+                })
+                .catch((error) => {
+                    console.log(JSON.stringify(error));
+                });  
+                
+        }
+        
+     
+     </script>
+
+ </body>
+</html>
+
+
+
+
+
+
+
+
+
+
