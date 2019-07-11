@@ -21,22 +21,9 @@
      <div id="posts-container"></div>
      
      <script>
-         
-        window.onload = () => {
-            const url = 'https://api.myjson.com/bins/152f9j';
-            fetch(url)
-                .then(res => res.json())
-                .then(data => {
-                    const rawData = data.data;
-                    return rawData.map(post => {
-                        //all needed data is listed below as an entity 
-                        let createdAt = post.createdAt;
-                            description = post.description;
-                            img = post.image;
-                            tags = post.tags;
-                            title = post.title;
-                        
-                        //create the post container element
+        
+         function addPosts (title, tags, img, description, createdAt) {
+                //create the post container element
                         const newPostContainer = document.createElement('div');
                         newPostContainer.setAttribute('class','single-post-container');
                         
@@ -80,6 +67,7 @@
                         const createdAtDay = createdAt.substring (8,10);
                         postCreateDate.innerHTML = createdAtMonthName + ' ' + createdAtDay + ', ' + createdAtYearNoLeadingZero;
                         
+                        
                         //create the post tags element
                         const postTags = document.createElement('p');
                         let allTagNames = tags[0]; 
@@ -88,6 +76,8 @@
                             allTagNames += ', ' + tags[i];
                         }
                         postTags.innerHTML = 'Tags: ' + allTagNames;
+                        
+                       
                         
                         //add created elements to the post container
                         newPostContainer.appendChild(removePostIconContainer);
@@ -100,17 +90,87 @@
                         //append element
                         const postsContainer = document.getElementById('posts-container');
                         postsContainer.appendChild(newPostContainer);
+            }
+        
+        window.onload = () => {
+            let posts = [];    
+            
+            const url = 'https://api.myjson.com/bins/152f9j';
+            fetch(url)
+                .then(res => res.json())
+                .then(data => {
+                    const rawData = data.data;
+                    return rawData.map(post => {
+                        //all needed data is listed below as an entity                  
+                        let postObject = {};
+                        postObject.title = post.title;
+                        postObject.tags = post.tags;
+                        postObject.img = post.image;
+                        postObject.description = post.description;
+                        postObject.createdAt = post.createdAt;
+                        postObject.createdAtMilliseconds = Date.parse(post.createdAt);
                         
-                        console.log(allTagNames);
-
+                        addPosts(postObject.title, postObject.tags, postObject.img, postObject.description, postObject.createdAt);
+                        
+                        posts.push(postObject);
+                        
                     });
                     
                 })
                 .catch((error) => {
                     console.log(JSON.stringify(error));
-                });  
+                });
+            
                 
+                setTimeout(() => 
+                {
+                    const postsAsc = [];
+                    for (let i = 0; i < posts.length; i++) {
+                        postsAsc[i] = posts[i];
+                    }
+                    
+                    let postsContainer = document.getElementById('posts-container');
+                    
+                    function sortPostsByDateAcs (a, b) {
+                        return a.createdAtMilliseconds - b.createdAtMilliseconds;
+                    }
+                    postsAsc.sort(sortPostsByDateAcs);
+                    
+                    const sortAsc = document.getElementById('sortAscending');                
+                    sortAsc.addEventListener('change', function(){
+                        
+                        postsContainer.innerHTML = ''
+    
+                        for (let i=0; i<postsAsc.length; i++) {
+                            
+                            addPosts(postsAsc[i].title, postsAsc[i].tags, postsAsc[i].img, postsAsc[i].description, postsAsc[i].createdAt);
+                        }
+                    });
+                    
+                    const postsDesc = [];
+                    for (let i = 0; i < posts.length; i++) {
+                        postsDesc[i] = posts[i];
+                    }
+                    
+                    function sortPostsByDateDecs (a, b) {
+                        return b.createdAtMilliseconds - a.createdAtMilliseconds;
+                    }
+                    postsDesc.sort(sortPostsByDateDecs);
+                    
+                    const sortDesc = document.getElementById('sortDescending');                
+                    sortDesc.addEventListener('change', function(){
+                        
+                        postsContainer.innerHTML = ''
+
+                        for (let i=0; i<postsDesc.length; i++) {
+                            
+                            addPosts(postsDesc[i].title, postsDesc[i].tags, postsDesc[i].img, postsDesc[i].description, postsDesc[i].createdAt);
+                        }
+                    });
+                           
+                }, 1000);                
         }
+
         
      
      </script>
